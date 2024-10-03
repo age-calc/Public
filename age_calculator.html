@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employment Age Calculator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Aptos&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Aptos', sans-serif;
+            background-color: #f2f2f2;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 5vw;  /* Responsive font size */
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 3vw;
+            width: 100%;
+            max-width: 600px;
+            padding: 10px;
+        }
+
+        label {
+            font-size: 2.5vw;
+            margin-right: 10px;
+            color: #555;
+        }
+
+        input[type="date"] {
+            padding: 10px;
+            font-size: 2vw;
+            width: 50%;
+            max-width: 250px; /* Limits the size so it doesn't grow too big */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            font-family: 'Aptos', sans-serif;
+        }
+
+        .result {
+            font-size: 3vw;
+            margin-top: 30px;
+        }
+
+        .age {
+            font-size: 4vw;
+            color: #000;
+            font-weight: bold;
+            font-style: italic;
+            text-decoration: underline;
+        }
+
+        .highlight-red {
+            color: red;
+            font-weight: bold;
+        }
+
+        .highlight-yellow {
+            background-color: yellow;
+            font-weight: bold;
+        }
+
+        /* For smaller screens, ensure the font doesn’t shrink too much */
+        @media (max-width: 600px) {
+            h1, .result, .age, label, input[type="date"] {
+                font-size: 4vw;
+            }
+            input[type="date"] {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 400px) {
+            h1, .result, .age, label, input[type="date"] {
+                font-size: 5vw;
+            }
+            input[type="date"] {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Employment Age Calculator</h1>
+
+    <!-- Input fields stacked, easily tabbable -->
+    <div class="input-container">
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" onchange="autoCalculateAge()" tabindex="1">
+    </div>
+
+    <div class="input-container">
+        <label for="start-date">Employment Start Date:</label>
+        <input type="date" id="start-date" name="start-date" onchange="autoCalculateAge()" tabindex="2">
+    </div>
+
+    <div class="result" id="current-age">Alien is currently <span class="age">N/A</span> years old</div>
+    <div class="result" id="work-start-age">Alien was <span class="age">N/A</span> years old at start of employment</div>
+
+    <script>
+        function autoCalculateAge() {
+            const dobInput = document.getElementById("dob").value;
+            const startDateInput = document.getElementById("start-date").value;
+
+            if (dobInput && startDateInput) {
+                const dob = new Date(dobInput);
+                const startDate = new Date(startDateInput);
+                const today = new Date();
+
+                // Calculate current age in years only
+                const currentAge = calculateYears(dob, today);
+                const currentAgeSpan = document.getElementById("current-age").querySelector('.age');
+
+                // Apply highlight condition for current age
+                if (currentAge < 14 || currentAge > 75) {
+                    currentAgeSpan.innerHTML = `<span class="highlight-red">${currentAge}</span>`;
+                } else {
+                    currentAgeSpan.innerHTML = currentAge;
+                }
+
+                // Calculate age at start of employment in years only
+                const workStartAge = calculateYears(dob, startDate);
+                const workStartAgeSpan = document.getElementById("work-start-age").querySelector('.age');
+
+                // Apply highlight condition for age at employment start
+                if (workStartAge <= 14) {
+                    workStartAgeSpan.innerHTML = `<span class="highlight-red">${workStartAge}</span>`;
+                } else if (workStartAge >= 14 && workStartAge <= 18) {
+                    workStartAgeSpan.innerHTML = `<span class="highlight-yellow">${workStartAge}</span>`;
+                } else {
+                    workStartAgeSpan.innerHTML = workStartAge;
+                }
+            }
+        }
+
+        function calculateYears(startDate, endDate) {
+            let years = endDate.getFullYear() - startDate.getFullYear();
+            let months = endDate.getMonth() - startDate.getMonth();
+
+            if (months < 0 || (months === 0 && endDate.getDate() < startDate.getDate())) {
+                years--;
+            }
+
+            return years;
+        }
+    </script>
+</body>
+</html>
